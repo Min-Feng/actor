@@ -12,6 +12,8 @@ type circle struct {
 	index int
 }
 
+// 由於actor的mailbox通道，我設為interface
+// 擁有Behavior()才允許通過
 func (c circle) Behavior() {
 	fmt.Printf("paint %d index circle that area is %f \n", c.index, c.r*c.r*3.14)
 }
