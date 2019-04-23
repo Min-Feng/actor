@@ -1,3 +1,4 @@
+// Package actor 模擬 erlang 的 訊息傳遞方式
 package actor
 
 import (
