@@ -12,4 +12,8 @@
 1. [main.go](main.go)
 2. [package actor](../actor.go)
 
+<div style="text-align: center">
+<img src="./Diagram.png"/>
+</div>
+
 ![](result.png)
