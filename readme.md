@@ -1,5 +1,5 @@
 actor模型主要說明  
-請到[demo1資料夾](./demo1)查看
+請到[demo1資料夾](./cmd/demo1)查看
 
 此處為嘗試 godoc example 功能的筆記
 
