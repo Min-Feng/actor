@@ -16,16 +16,10 @@ type message interface {
 	Behavior()
 }
 
-type receiverData struct {
-	receiver *Actor
-	msg      message
-}
-
 type Actor struct {
 	name       string
 	mu         sync.RWMutex
 	recvChan   chan message
-	sendChan   chan receiverData
 	cancelFunc context.CancelFunc
 	ctx        context.Context
 }
@@ -37,7 +31,6 @@ func System() *Actor {
 	sysActor := &Actor{
 		name:     systemName,
 		recvChan: make(chan message, defaultMailboxSize),
-		sendChan: make(chan receiverData),
 		ctx:      rootCtx,
 	}
 
@@ -60,7 +53,6 @@ func (ac *Actor) ActorOf(name string) *Actor {
 	childActor := &Actor{
 		name:       childName,
 		recvChan:   make(chan message, defaultMailboxSize),
-		sendChan:   make(chan receiverData),
 		cancelFunc: cancel,
 		ctx:        childCtx,
 	}
@@ -73,17 +65,16 @@ func (ac *Actor) ActorOf(name string) *Actor {
 func actorHandler(ac *Actor) {
 	for {
 		select {
-		case msg := <-ac.recvChan: //接收其他actor送來的訊息
+		// 接收其他 actor 送來的訊息
+		case msg := <-ac.recvChan:
 			msg.Behavior()
 
-		case recvData := <-ac.sendChan: //以此actor的身份 對 其他actor 發送訊息
-			sendTo(recvData.receiver, recvData.msg)
-
-		case <-ac.ctx.Done(): //停止actor的運作
+		// 停止 actor 的運作
+		case <-ac.ctx.Done():
 			fmt.Printf("Actor{%s} is closed\n", ac.name)
 			close(ac.recvChan)
 
-			// 關閉actor前,確保mailbox內的值都讀取出來執行一次
+			// 關閉 actor 前,確保 mailbox 內的值都讀取出來執行一次
 			for msg := range ac.recvChan {
 				msg.Behavior()
 			}
@@ -94,12 +85,9 @@ func actorHandler(ac *Actor) {
 
 // SendTo 指定 sender 發送訊息到 receiver
 func (sender *Actor) SendTo(receiver *Actor, msg message) {
-	recvData := receiverData{
-		receiver: receiver,
-		msg:      msg,
-	}
 
-	sender.sendChan <- recvData
+	//以此 actor 的身份 對 其他 actor 發送訊息
+	sendTo(receiver, msg)
 }
 
 func sendTo(receiver *Actor, msg message) {
