@@ -16,3 +16,7 @@ actor模型主要說明
 
 為什麼不能引入第三方套件的原因  
 <https://stackoverflow.com/questions/41336341/cannot-find-package-error-on-godoc-playable-examples?rq=1>
+
+
+GoDoc的使用
+<https://www.jianshu.com/p/b91c4400d4b2>
